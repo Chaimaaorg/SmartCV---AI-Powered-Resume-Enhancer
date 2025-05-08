@@ -1,10 +1,10 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
-from typing import List, Dict, Any
 import asyncio
 import os
 import fitz  # PyMuPDF
 import cv2
 from PIL import Image, ImageEnhance
+import easyocr
 from deskew import determine_skew
 from io import BytesIO
 import pytesseract
@@ -23,7 +23,6 @@ logger = logging.getLogger(__name__)
 # Ensure necessary directories exist
 os.makedirs("extracted_markdown", exist_ok=True)
 os.makedirs("temp_files", exist_ok=True)
-
 
 @router.post("/cv", response_model=Resume)
 async def ocr_resume(file: UploadFile = File(...)):
@@ -77,11 +76,10 @@ async def ocr_resume(file: UploadFile = File(...)):
         except Exception as e:
             logger.error(f"Error processing {file_name}: {e}")
             raise HTTPException(status_code=500, detail=f"PDF processing error: {str(e)}")
-    
+
     except Exception as e:
         logger.error(f"API error: {e}")
         raise HTTPException(status_code=500, detail=f"Server error: {str(e)}")
-
 
 async def ocr_scanned_doc_process(bytesdoc, page_indices):
     """
@@ -104,7 +102,8 @@ async def ocr_scanned_doc_process(bytesdoc, page_indices):
                 image_array = cv2.cvtColor(image_array, cv2.COLOR_RGBA2RGB)
 
             processed_img = preprocess_image(Image.fromarray(image_array))
-            text = await ocr_page(Image.fromarray(np.array(processed_img)), page_index)
+            # text = await extract_text_from_image_docling(Image.fromarray(np.array(processed_img)), page_index)
+            text = await extract_text_from_image_easyocr(np.array(processed_img), page_index)
 
             output_dir = "extracted_markdown"
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
@@ -131,7 +130,6 @@ async def ocr_scanned_doc_process(bytesdoc, page_indices):
 
     return output
 
-
 def preprocess_image(image):
     """
     Preprocess an image for better OCR results.
@@ -144,30 +142,138 @@ def preprocess_image(image):
     """
     if isinstance(image, np.ndarray):
         image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    
+
     gray = np.array(image.convert("L"))
     mean_intensity = np.mean(gray)
-    
+
     if mean_intensity < 10:
         logger.info("The image appears to be blackened. Skipping further processing.")
         return image
-    
+
     laplacian_var = cv2.Laplacian(gray, cv2.CV_64F).var()
     if laplacian_var < 100:
         blurred_correction = cv2.GaussianBlur(gray, (5, 5), 0)
         gray = cv2.addWeighted(gray, 1.5, blurred_correction, -0.5, 0)
-    
+
     denoised = cv2.fastNlMeansDenoising(gray, None, 7, 7, 21)
     processed_image = Image.fromarray(denoised)
     processed_image = ImageEnhance.Contrast(processed_image).enhance(1.3)
     processed_image = ImageEnhance.Sharpness(processed_image).enhance(1.8)
     processed_image, angle = correct_orientation(np.array(processed_image))
     logger.info(f"Image corrected with an angle of {angle} degrees")
-    
+
     return processed_image
 
+async def extract_text_from_image_easyocr(image_np, page_index, languages=['fr', 'en']):
+    """
+    Extract text from an image using EasyOCR.
+    
+    Args:
+        image_np (np array): Image as np array
+        languages (list): List of languages to use for OCR, default ['fr', 'en']
+        page_index (int): Page number
+    
+    Returns:
+        dict: A dictionary containing:
+            - 'raw_results': Raw EasyOCR results
+            - 'text': Full extracted text
+            - 'text_layout': Text representation preserving spatial layout
+            - 'text_by_region': List of tuples (text, confidence, coordinates)
+    """    
+    # Initialize EasyOCR reader (runs once to load the model in memory)
+    reader = easyocr.Reader(languages)
 
-async def ocr_page(image: Image.Image, page_index: int) -> str:
+    # Perform OCR
+    result = reader.readtext(image_np)
+        
+    # Create a spatial representation of the text
+    text_layout = simulate_text_placement(result)
+
+    output_file_path = f"temp_files/output_file_{page_index}.txt"
+    with open(output_file_path, "w", encoding="utf-8") as file:
+        file.write(text_layout)
+
+    logger.info(f"✅ Text extracted and saved to: {output_file_path}")
+
+    return text_layout
+
+def polygon_to_bbox(polygon):
+    """
+    Convert polygon coordinates to bounding box.
+    
+    Args:
+        polygon (list): List of coordinates [(x1,y1), (x2,y2), (x3,y3), (x4,y4)]
+    
+    Returns:
+        tuple: (x_min, y_min, x_max, y_max)
+    """
+    # Extract x and y coordinates
+    x_coords = [point[0] for point in polygon]
+    y_coords = [point[1] for point in polygon]
+
+    # Find min and max coordinates
+    x_min = min(x_coords)
+    y_min = min(y_coords)
+    x_max = max(x_coords)
+    y_max = max(y_coords)
+
+    return (x_min, y_min, x_max, y_max)
+
+def simulate_text_placement(text_objects, scale_factor=0.1):
+    """
+    Simulates text placement based on coordinates of objects detected by OCR.
+    Returns a text representation that preserves spatial layout.
+    
+    Args:
+        text_objects: List of tuples (polygon, text, confidence) from EasyOCR
+        scale_factor: Scale factor to avoid overlaps
+    
+    Returns:
+        String with preserved text layout
+    """
+    # Find maximum dimensions
+    max_x, max_y = 0, 0
+    positioned_texts = []
+
+    for obj in text_objects:
+        polygon, text, _ = obj
+        bbox = polygon_to_bbox(polygon)
+        x, y = bbox[0], bbox[1]  # Upper left corner
+        
+        # Update maximum dimensions
+        max_x = max(max_x, x + len(text))
+        max_y = max(max_y, y)
+        
+        # Store text with its position
+        positioned_texts.append((int(x), int(y), text))
+
+    # Create an empty grid (character matrix)
+    grid_width = int(max_x * scale_factor) + 100
+    grid_height = int(max_y * scale_factor) + 100
+    grid = [[' ' for _ in range(grid_width)] for _ in range(grid_height)]
+
+    # Place each text in the grid
+    for x, y, text in positioned_texts:
+        x_scaled = int(x * scale_factor)
+        y_scaled = int(y * scale_factor)
+        
+        # Ensure coordinates are within bounds
+        if 0 <= y_scaled < grid_height:
+            for i, char in enumerate(text):
+                if 0 <= x_scaled + i < grid_width:
+                    grid[y_scaled][x_scaled + i] = char
+
+    # Convert grid to string
+    result = []
+    for row in grid:
+        # Remove trailing spaces
+        row_text = ''.join(row).rstrip()
+        if row_text:  # Don't add empty lines
+            result.append(row_text)
+
+    return '\n'.join(result)
+
+async def extract_text_from_image_docling(image: Image.Image, page_index: int) -> str:
     """
     Perform OCR on an image and extract text.
     
@@ -210,7 +316,6 @@ async def ocr_page(image: Image.Image, page_index: int) -> str:
     logger.info(f"✅ Text extracted and saved to: {output_file_path}")
     return text_output
 
-
 def correct_orientation(image, ocr_confirmation=True):
     """
     Correct the orientation of the image.
@@ -246,7 +351,6 @@ def correct_orientation(image, ocr_confirmation=True):
 
     return image, angle_deskew
 
-
 def rotate_image(image, angle):
     """
     Rotate an image by a given angle.
@@ -260,7 +364,7 @@ def rotate_image(image, angle):
     """
     if angle == 0:
         return image
-    
+
     (h, w) = image.shape[:2]
     center = (w // 2, h // 2)
     M = cv2.getRotationMatrix2D(center, angle, 1.0)
@@ -278,5 +382,5 @@ def rotate_image(image, angle):
         borderMode=cv2.BORDER_CONSTANT,
         borderValue=(255, 255, 255)
     )
-    
+
     return rotated

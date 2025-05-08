@@ -1,78 +1,79 @@
-# CV Optimization API
+# 📄 CV Optimization API
 
-This API enables the extraction, structuring, and AI-enhanced optimization of CVs (resumes) based on job descriptions, with a strong backend foundation and modern technologies such as FastAPI, OCR, and LLMs (Langchain + HuggingFace or Ollama).
+This API enables extraction, structuring, and intelligent optimization of resumes based on job postings. It's built on a modern FastAPI backend and leverages AI technologies like OCR, LangChain, HuggingFace, or Ollama.
+
+![Current Welcome Page](assets/welcome_page.png)
 
 ---
 
-## 🔧 Overview of the Architecture
+## 🔧 Architecture Overview
 
-| Step                                                                  | Description                                                                                | Resources                                                                                                                                           |
-| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 🧠 Backend (FastAPI)                                                  | Solid, fast, and modern Python-based API framework. Type-safe and highly scalable.         | 📚 [FastAPI Documentation](https://fastapi.tiangolo.com/)                                                                                           |
-| 📝 Content Extraction (Docling, RapidOCR)                             | Fast OCR suitable for semi-structured documents like resumes.                              | 📚 [Docling GitHub](https://github.com/docling-ai/docling), [RapidOCR GitHub](https://github.com/RapidAI/RapidOCR)                                  |
-| 📦 Resume-to-JSON Conversion (LLM via LangChain + HuggingFace/Ollama) | Transforms unstructured CV text into a normalized, structured JSON schema.                 | 📚 [LangChain Docs](https://docs.langchain.dev/), [HuggingFace Hub](https://huggingface.co/models)                                                  |
-| 🎯 Resume Optimization (LLM)                                          | Tailors the resume to a specific job description using AI to enhance relevance and impact. | 📚 [McKinsey - AI in Recruiting](https://www.mckinsey.com/capabilities/people-and-organizational-performance/our-insights/the-future-of-recruiting) |
-| 🔁 Standardized JSON Output                                           | Enables clean integration with frontend and simplifies rendering and formatting logic.     | —                                                                                                                                                   |
-| 🖥️ Frontend (Future Work)                                            | To be defined. Next.js (with App Router) or SvelteKit would be strong modern options.      | 📚 [Next.js Documentation](https://nextjs.org/)                                                                                                     |
+| Stage                                                       | Description                                                                               | Resources                                                                                                                                          |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🧠 **Backend (FastAPI)**                                    | Modern Python framework - fast, typed, and scalable                                       | 📚 [FastAPI Documentation](https://fastapi.tiangolo.com/)                                                                                           |
+| 📝 **Content Extraction (Docling, RapidOCR)**               | Fast OCR optimized for semi-structured documents (resumes)                                | 📚 [Docling GitHub](https://github.com/docling-ai/docling), [RapidOCR GitHub](https://github.com/RapidAI/RapidOCR)                                  |
+| 📦 **CV → JSON Conversion (LLM via LangChain + HF/Ollama)** | Transformation of free text into structured, standardized JSON schema                     | 📚 [LangChain Docs](https://docs.langchain.dev/), [HuggingFace Hub](https://huggingface.co/models)                                                  |
+| 🎯 **CV Optimization (LLM)**                                | Resume adjustment based on job postings to maximize relevance                             | 📚 [McKinsey - AI in Recruiting](https://www.mckinsey.com/capabilities/people-and-organizational-performance/our-insights/the-future-of-recruiting) |
+| 🔁 **Standardized JSON Output**                             | Facilitates frontend integration, rendering, and document generation                      | —                                                                                                                                                   |
+| 🖥️ **Frontend (Static then Next.js)**                      | Currently pure HTML/CSS/JS. Migration to Next.js (App Router) planned.                    | 📚 [Next.js Documentation](https://nextjs.org/)                                                                                                     |
 
 ---
 
 ## 🚀 Why This Project Matters
 
-* ✅ Technically realistic and feasible (popular stack, no exotic dependencies)
-* 🎯 Direct impact: improved employability and more relevant job applications
-* 🔄 Scalable: future expansion possible (e.g., cover letters, portfolios)
-* 🤖 Smart use of LLMs: not rewriting blindly, but targeting the job description intelligently
+* ✅ **Robust stack** with no exotic dependencies
+* 💼 **Tangible impact** on users' employability
+* 🔄 **Scalable**: Potential extensions to cover letters, scoring, portfolios...
+* 🤖 **Targeted AI use**: Smart alignment with job postings and intelligent structuring
 
 ---
 
-## 💡 Recommendations for Improvement
+## 🔮 Frontend Roadmap
 
-1. Define a very clear and strict JSON schema from the start using Pydantic. Suggested fields:
-
-   * Personal Info: name, email, phone
-   * Experiences
-   * Skills
-   * Education
-   * Certifications
-   * Languages
-
-2. Model Selection:
-
-   * Hugging Face: Use Mixtral, Command-R, or T5/T0 for better reformulation
-   * Ollama: Convenient for local deployment and privacy-friendly
-
-3. Frontend Strategy:
-
-   * Use Next.js with App Router to build:
-
-     * A page for uploading the CV
-     * A job offer selection page
-     * A preview of the optimized CV (possibly downloadable in Word or PDF)
-
-4. Bonus Features (Future Scope):
-
-   * Add a scoring system (match score between CV and offer)
-   * Generate Word/PDF CVs using python-docx or pdfkit
+| Phase    | Content                                                                 |
+| -------- | ---------------------------------------------------------------------- |
+| ✅ Current | Static frontend (HTML, CSS, JS) in `app/static/`                       |
+| 🔜 Future | Migration to **Next.js** with App Router (upload, preview, scoring…)   |
 
 ---
 
-## 📦 Project Features
+## 🛠️ Recommendations
 
-* 🧾 OCR-based parsing of resumes in PDF format
-* 🧠 AI-enhanced resume optimization aligned with job offers
-* 📊 Structured data in JSON for easy consumption by frontends
-* 📈 Potential for job-CV match scoring and CV generation in various formats
+### 1. Strict JSON Schema (via Pydantic)
+
+* `personal_info`: name, email, phone
+* `experiences`, `skills`, `education`, `certifications`, `languages`
+
+### 2. Recommended LLM Models
+
+* **Hugging Face**: Mixtral, T5/T0, Mistral
+* **Ollama**: Llama3, Mistral (local) for privacy and performance
+
+### 3. Frontend
+
+* Build these pages with **Next.js**:
+  * Resume upload
+  * Job posting selection
+  * Optimized resume preview (Word/PDF export)
 
 ---
 
-## 🔌 Setup Instructions
+## ✨ Features
+
+* 🔍 OCR parsing of resumes (PDF)
+* 🧠 Job posting-aligned optimization
+* 📊 Clean JSON structuring for frontend consumption
+* 📈 Future possibilities: scoring, PDF/Word export
+
+---
+
+## ⚙️ Installation
 
 ### Prerequisites
 
-* Python 3.9+
+* Python ≥ 3.9
 * [Tesseract OCR](https://github.com/tesseract-ocr/tesseract)
-* [Ollama](https://ollama.ai/) (optional for LLM processing)
+* [Ollama](https://ollama.ai/) (optional for local LLM)
 
 ### Installation
 
@@ -86,29 +87,30 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-To use Ollama with a local model (e.g., Mistral):
+Download an Ollama model:
 
 ```bash
-ollama pull mistral
+ollama pull llama3
 ```
 
 ---
 
 ## 🧪 Usage
 
-### Launch API
+### Launch the API
 
 ```bash
-python main.py
+python app/main.py
 ```
 
 * Swagger: [http://localhost:8000/docs](http://localhost:8000/docs)
 * ReDoc: [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
-### API Endpoints
+### Endpoints
 
-1. POST /api/process/cv
-   Uploads a resume and returns extracted structured data.
+#### 1. `POST /api/process/cv`
+
+Upload a resume (PDF), returns structured JSON.
 
 ```bash
 curl -X POST "http://localhost:8000/api/process/cv" \
@@ -117,8 +119,9 @@ curl -X POST "http://localhost:8000/api/process/cv" \
   -F "file=@your_resume.pdf"
 ```
 
-2. POST /api/result/optimize
-   Sends a structured CV and job offer data, returns an optimized version.
+#### 2. `POST /api/result/optimize`
+
+Send structured JSON + job posting → returns optimized resume.
 
 ---
 
@@ -137,6 +140,12 @@ curl -X POST "http://localhost:8000/api/process/cv" \
 ├── services/
 │   ├── cv_parser.py
 │   └── cv_optimizer.py
+├── static/
+│   ├── css/
+│   │   └── styles.css
+│   ├── js/
+│   │   └── script.js
+│   └── index.html
 ├── temp_files/
 └── extracted_markdown/
 ```
@@ -145,28 +154,26 @@ curl -X POST "http://localhost:8000/api/process/cv" \
 
 ## ⚠️ Error Handling
 
-* 400 for invalid file format
-* 422 for validation errors
-* 500 for internal processing issues (with traceback in dev mode)
+* **400**: Invalid file
+* **422**: Validation error
+* **500**: Server error (stacktrace in dev)
 
 ---
 
-## 🚀 Deployment Suggestions
-
-* Use Gunicorn with Uvicorn workers:
+## 🚀 Deployment
 
 ```bash
-gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
+gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app
 ```
 
-* Add rate-limiting, logging, authentication, and env-based config management
+* Add: logging, auth, env management (`pydantic.BaseSettings`)
 
 ---
 
-## 📚 Resources
+## 📚 References
 
 * [LangChain Structured Output](https://python.langchain.com/docs/modules/model_io/output_parsers/structured)
-* [OCR Library Review - TowardsDataScience](https://towardsdatascience.com/top-5-open-source-ocr-libraries-in-2024-9c9a5c04d6d5)
-* [RealPython - FastAPI Best Practices](https://realpython.com/fastapi-python-web-apis/)
-* [McKinsey - AI in Recruiting](https://www.mckinsey.com/capabilities/people-and-organizational-performance/our-insights/the-future-of-recruiting)
-* [Medium - Mastering Structured Output in LLMs](https://medium.com/@docherty/mastering-structured-output-in-llms-choosing-the-right-model-for-json-output-with-langchain-be29fb6f6675)
+* [OCR Libraries Review (TDS)](https://towardsdatascience.com/top-5-open-source-ocr-libraries-in-2024-9c9a5c04d6d5)
+* [FastAPI Best Practices (RealPython)](https://realpython.com/fastapi-python-web-apis/)
+* [AI in Recruiting (McKinsey)](https://www.mckinsey.com/capabilities/people-and-organizational-performance/our-insights/the-future-of-recruiting)
+* [LLMs & JSON Output (Medium)](https://medium.com/@docherty/mastering-structured-output-in-llms-choosing-the-right-model-for-json-output-with-langchain-be29fb6f6675)

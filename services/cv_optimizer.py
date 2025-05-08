@@ -87,7 +87,7 @@ def llm_optimize_resume(resume: Resume, job_offer: JobOffer) -> OptimizationResp
         
         # Use Ollama for processing
         model = OllamaLLM(
-            model="mistral:latest",
+            model="llama3:latest",
             temperature=0.2,
             system="You are a precision resume optimization system that outputs only valid, well-structured JSON."
         )

@@ -61,7 +61,7 @@ def extract_resume_from_text(extracted_text: str) -> Resume:
 
             # Use a more specific system message and temperature for structured output
             model = OllamaLLM(
-                model="mistral:latest",
+                model="llama3:latest",
                 temperature=0.1,  # Lower temperature for more consistent outputs
                 system="You are a precision data extraction system that outputs only valid, well-structured JSON."
             )

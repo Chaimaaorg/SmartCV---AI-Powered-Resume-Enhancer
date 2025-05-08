@@ -1,0 +1,193 @@
+/* General Styles */
+body {
+    background-color: #f5f8fa;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Card Styles */
+.card {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+    border-radius: 8px 8px 0 0 !important;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eaedf0;
+}
+
+/* Upload Area Styles */
+.upload-area {
+    border: 2px dashed #d1d8e0;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    background-color: #f8fafc;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.upload-area:hover, .upload-area.dragover {
+    border-color: #4299e1;
+    background-color: #ebf8ff;
+}
+
+.upload-icon {
+    color: #4299e1;
+    margin-bottom: 15px;
+}
+
+.upload-text p {
+    color: #718096;
+    margin-bottom: 15px;
+}
+
+/* Progress Bar */
+.progress {
+    height: 10px;
+    border-radius: 5px;
+}
+
+/* Table Styles */
+.table th {
+    font-weight: 600;
+    background-color: #f8f9fa;
+}
+
+/* List Styles */
+ul.skills-list {
+    padding-left: 0;
+    list-style-type: none;
+}
+
+ul.skills-list li {
+    display: inline-block;
+    background-color: #edf2f7;
+    color: #4a5568;
+    padding: 5px 10px;
+    border-radius: 15px;
+    margin: 0 5px 5px 0;
+    font-size: 0.875rem;
+}
+
+/* Experience & Education Cards */
+.timeline-item {
+    border-left: 2px solid #4299e1;
+    padding-left: 20px;
+    padding-bottom: 20px;
+    position: relative;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: #4299e1;
+}
+
+.timeline-date {
+    color: #718096;
+    font-size: 0.875rem;
+}
+
+.timeline-title {
+    font-weight: 600;
+    margin: 5px 0;
+}
+
+.timeline-location {
+    color: #718096;
+    font-size: 0.875rem;
+    margin-bottom: 10px;
+}
+
+/* JSON Modal */
+#jsonContent {
+    max-height: 500px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.875rem;
+}
+
+/* Animation for sections */
+.toggle-section .fas {
+    transition: transform 0.3s;
+}
+
+.toggle-section.collapsed .fas {
+    transform: rotate(-90deg);
+}
+
+/* Skills badges */
+.skill-badge {
+    display: inline-block;
+    background-color: #e2e8f0;
+    color: #4a5568;
+    padding: 6px 12px;
+    border-radius: 16px;
+    margin: 0 8px 8px 0;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.skill-badge:hover {
+    background-color: #4299e1;
+    color: #ffffff;
+}
+.toggle-section .fas {
+    transition: transform 0.3s ease;
+}
+
+.toggle-section.collapsed .fas {
+    transform: rotate(-90deg);
+}
+
+@media (max-width: 768px) {
+    .upload-area {
+        padding: 20px;
+    }
+
+    .skill-badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+    }
+
+    .timeline-item {
+        padding-left: 15px;
+    }
+
+    .timeline-item::before {
+        left: -7px;
+        width: 12px;
+        height: 12px;
+    }
+}
+
+/* Section Headings */
+.card-header h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* Upload Button */
+#browseButton {
+    margin-top: 10px;
+}
+
+/* JSON Modal Content */
+#jsonContent {
+    background-color: #f1f5f9;
+    border-radius: 4px;
+    padding: 15px;
+    overflow-x: auto;
+}
