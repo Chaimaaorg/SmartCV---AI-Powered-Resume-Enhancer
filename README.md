@@ -169,11 +169,3 @@ gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app
 * Add: logging, auth, env management (`pydantic.BaseSettings`)
 
 ---
-
-## 📚 References
-
-* [LangChain Structured Output](https://python.langchain.com/docs/modules/model_io/output_parsers/structured)
-* [OCR Libraries Review (TDS)](https://towardsdatascience.com/top-5-open-source-ocr-libraries-in-2024-9c9a5c04d6d5)
-* [FastAPI Best Practices (RealPython)](https://realpython.com/fastapi-python-web-apis/)
-* [AI in Recruiting (McKinsey)](https://www.mckinsey.com/capabilities/people-and-organizational-performance/our-insights/the-future-of-recruiting)
-* [LLMs & JSON Output (Medium)](https://medium.com/@docherty/mastering-structured-output-in-llms-choosing-the-right-model-for-json-output-with-langchain-be29fb6f6675)
